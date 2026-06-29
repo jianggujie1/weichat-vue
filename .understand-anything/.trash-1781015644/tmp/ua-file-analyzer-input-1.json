@@ -1,0 +1,19 @@
+{
+  "projectRoot": "/Users/jianggujie1/dev/work/html/weichat-vue",
+  "batchFiles": [
+    {"path": "PROJECT.md", "language": "markdown", "sizeLines": 205, "fileCategory": "docs"},
+    {"path": "README.md", "language": "markdown", "sizeLines": 74, "fileCategory": "docs"},
+    {"path": "bug.md", "language": "markdown", "sizeLines": 52, "fileCategory": "docs"},
+    {"path": "index.html", "language": "html", "sizeLines": 33, "fileCategory": "markup"},
+    {"path": "package.json", "language": "json", "sizeLines": 25, "fileCategory": "config"},
+    {"path": "tsconfig.json", "language": "json", "sizeLines": 24, "fileCategory": "config"}
+  ],
+  "batchImportData": {
+    "PROJECT.md": [],
+    "README.md": [],
+    "bug.md": [],
+    "index.html": [],
+    "package.json": [],
+    "tsconfig.json": []
+  }
+}

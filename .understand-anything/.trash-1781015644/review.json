@@ -1,0 +1,31 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'document:bug.md' has no edges (orphan)",
+    "Node 'file:public/static/app/css/jquery.range.css' has no edges (orphan)",
+    "Node 'file:.understand-anything/.understandignore' has no edges (orphan)",
+    "Node 'file:public/static/app/js/common.bundle.js' has no edges (orphan)",
+    "Node 'file:src/vite-env.d.ts' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 29,
+    "totalEdges": 31,
+    "totalLayers": 6,
+    "tourSteps": 10,
+    "nodeTypes": {
+      "document": 3,
+      "file": 19,
+      "config": 2,
+      "function": 5
+    },
+    "edgeTypes": {
+      "documents": 4,
+      "configures": 3,
+      "related": 2,
+      "imports": 9,
+      "contains": 7,
+      "exports": 5,
+      "depends_on": 1
+    }
+  }
+}

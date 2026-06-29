@@ -1,0 +1,62 @@
+[
+  {
+    "order": 1,
+    "title": "项目概览",
+    "description": "weichat-vue 是一个基于 Vue 3 + Vite 的微信对话生成器，可生成逼真的聊天截图、GIF 和视频。README.md 提供了快速上手指南和项目结构说明，是理解整个项目的起点。",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "应用入口与挂载",
+    "description": "应用从 main.ts 开始，使用 createApp 创建 Vue 实例并挂载到 HTML 中的 #app 元素。它同时引入全局样式文件，定义了整体布局的基础结构。",
+    "nodeIds": ["file:src/main.ts", "file:index.html", "file:src/style.css"]
+  },
+  {
+    "order": 3,
+    "title": "主组件 — UI 布局与配置面板",
+    "description": "App.vue 是应用的主组件，包含左侧配置面板（外观设置 + 对话设置）和右侧微信手机预览。它通过 useChat composable 获取所有状态和方法，是整个 UI 的组织核心。",
+    "nodeIds": ["file:src/App.vue"]
+  },
+  {
+    "order": 4,
+    "title": "核心业务逻辑 — useChat",
+    "description": "useChat.js 是应用的状态管理中心，提供响应式的手机状态、用户管理、对话管理和截图/GIF 导出功能。所有对话类型（文字/图片/语音/红包/转账）都在这里创建和管理。",
+    "nodeIds": ["file:src/composables/useChat.js"]
+  },
+  {
+    "order": 5,
+    "title": "类型定义与工具函数",
+    "description": "types/index.ts 定义了 Dialog、User、PhoneConfig 等核心数据接口。utils/index.ts 提供了金额格式化、语音条宽度计算等辅助函数，供 App.vue 和 useChat 调用。",
+    "nodeIds": ["file:src/types/index.ts", "file:src/utils/index.ts", "file:src/utils/options.ts"]
+  },
+  {
+    "order": 6,
+    "title": "截图与导出功能",
+    "description": "截图功能由 html2canvas 库实现（在 chat.bundle.js 中调用），将 DOM 节点转换为 PNG 图片。GIF 导出使用 gif.js 库，通过 Web Worker 在后台线程编码帧序列。",
+    "nodeIds": ["file:public/static/app/js/chat.bundle.js", "file:public/static/app/js/gif.js", "file:public/static/app/js/gif.worker.js"]
+  },
+  {
+    "order": 7,
+    "title": "UI 样式 — 微信界面皮肤",
+    "description": "app.css 是应用的核心样式表，定义了完整的 iOS 风格微信界面（状态栏、导航栏、对话气泡、语音条、红包/转账卡片等）。wallet.css 补充了钱包相关样式，jquery.range.css 为电池滑块提供样式。",
+    "nodeIds": ["file:public/static/app/css/app.css", "file:public/static/app/css/wallet.css", "file:public/static/app/css/jquery.range.css"]
+  },
+  {
+    "order": 8,
+    "title": "自动生成与扩展脚本",
+    "description": "auto-gen.js 是自动化对话生成扩展，可以解析文本格式的对话内容（文字、图片、语音、红包、转账）并自动注入到应用中，便于快速生成预设场景。",
+    "nodeIds": ["file:public/static/app/ext/auto-gen.js"]
+  },
+  {
+    "order": 9,
+    "title": "项目配置与构建",
+    "description": "package.json 定义了项目依赖（Vue、html2canvas、gif.js）和构建脚本。tsconfig.json 配置了 TypeScript 编译选项（严格模式、路径别名）。vite.config.ts 配置了 Vite 开发服务器和 Vue 插件。",
+    "nodeIds": ["config:package.json", "config:tsconfig.json", "file:vite.config.ts"]
+  },
+  {
+    "order": 10,
+    "title": "技术文档",
+    "description": "PROJECT.md 记录了从 jQuery 版本迁移到 Vue 3 的详细技术过程、核心实现方案和关键决策。bug.md 记录了迁移过程中的所有 Bug 修复，可作为排查问题的参考。",
+    "nodeIds": ["document:PROJECT.md", "document:bug.md"]
+  }
+]

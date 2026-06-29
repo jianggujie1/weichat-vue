@@ -1,0 +1,295 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "PROJECT.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 206,
+      "nonEmptyLines": 161,
+      "sections": [
+        {
+          "heading": "微信对话生成器 Vue 移植项目",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "一、项目背景",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "二、项目结构",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "三、核心技术实现",
+          "level": 2,
+          "line": 61
+        },
+        {
+          "heading": "3.1 响应式数据模型（useChat.js）",
+          "level": 3,
+          "line": 63
+        },
+        {
+          "heading": "3.2 对话类型",
+          "level": 3,
+          "line": 72
+        },
+        {
+          "heading": "3.3 红包/转账领取逻辑",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "3.4 截图导出",
+          "level": 3,
+          "line": 88
+        },
+        {
+          "heading": "四、已修复 Bug 记录",
+          "level": 2,
+          "line": 97
+        },
+        {
+          "heading": "样式修复",
+          "level": 3,
+          "line": 101
+        },
+        {
+          "heading": "功能修复",
+          "level": 3,
+          "line": 106
+        },
+        {
+          "heading": "额外修复",
+          "level": 3,
+          "line": 114
+        },
+        {
+          "heading": "五、关键决策记录",
+          "level": 2,
+          "line": 119
+        },
+        {
+          "heading": "六、快速启动",
+          "level": 2,
+          "line": 132
+        },
+        {
+          "heading": "七、当前状态 & TODO",
+          "level": 2,
+          "line": 152
+        },
+        {
+          "heading": "✅ 已完成",
+          "level": 3,
+          "line": 154
+        },
+        {
+          "heading": "🔲 待继续（按优先级）",
+          "level": 3,
+          "line": 164
+        },
+        {
+          "heading": "八、技术栈",
+          "level": 2,
+          "line": 178
+        },
+        {
+          "heading": "九、与原始项目的差异",
+          "level": 2,
+          "line": 190
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 19
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 74,
+      "nonEmptyLines": 56,
+      "sections": [
+        {
+          "heading": "在线微信对话生成器",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "在线体验",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "功能",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "技术栈",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "快速启动",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "项目结构",
+          "level": 2,
+          "line": 50
+        },
+        {
+          "heading": "详细文档",
+          "level": 2,
+          "line": 72
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "bug.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 53,
+      "nonEmptyLines": 39,
+      "sections": [
+        {
+          "heading": "Bug 修复记录",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "样式问题",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "功能问题",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "额外修复",
+          "level": 2,
+          "line": 48
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 4
+      }
+    },
+    {
+      "path": "index.html",
+      "language": "html",
+      "fileCategory": "markup",
+      "totalLines": 33,
+      "nonEmptyLines": 31,
+      "metrics": {}
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 25,
+      "nonEmptyLines": 25,
+      "sections": [
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "private",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "type",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "scripts",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "dependencies",
+          "level": 1,
+          "line": 11
+        },
+        {
+          "heading": "devDependencies",
+          "level": 1,
+          "line": 16
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 25,
+      "nonEmptyLines": 25,
+      "sections": [
+        {
+          "heading": "compilerOptions",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "include",
+          "level": 1,
+          "line": 23
+        },
+        {
+          "heading": "references",
+          "level": 1,
+          "line": 24
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    }
+  ]
+}

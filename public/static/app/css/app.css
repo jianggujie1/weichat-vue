@@ -2056,7 +2056,8 @@ fieldset[disabled] .radio-custom label {
 
 .wechat-dialog-voice {
     display: flex;
-    align-items: center
+    align-items: center;
+    position: relative;
 }
 
 .wechat-dialog-voice i {
@@ -2078,7 +2079,10 @@ fieldset[disabled] .radio-custom label {
     border-radius: 50%;
     background: #e75e58;
     position: absolute;
-    right: -61px
+    left: 100%;
+    top: 50%;
+    margin-top: -12px;
+    margin-left: 20px;
 }
 
 .wechat-dialog-right .wechat-dialog-voice i {

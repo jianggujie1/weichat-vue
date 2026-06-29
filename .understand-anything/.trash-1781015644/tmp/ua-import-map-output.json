@@ -1,0 +1,37 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 24,
+    "filesWithImports": 1,
+    "totalEdges": 2
+  },
+  "importMap": {
+    ".understand-anything/.understandignore": [],
+    "bug.md": [],
+    "index.html": [],
+    "package.json": [],
+    "PROJECT.md": [],
+    "public/static/app/css/app.css": [],
+    "public/static/app/css/jquery.range.css": [],
+    "public/static/app/css/wallet.css": [],
+    "public/static/app/ext/auto-gen.js": [],
+    "public/static/app/js/chat.bundle.js": [],
+    "public/static/app/js/common.bundle.js": [],
+    "public/static/app/js/gif.js": [],
+    "public/static/app/js/gif.worker.js": [],
+    "README.md": [],
+    "src/App.vue": [],
+    "src/composables/useChat.js": [],
+    "src/main.ts": [
+      "src/App.vue",
+      "src/style.css"
+    ],
+    "src/style.css": [],
+    "src/types/index.ts": [],
+    "src/utils/index.ts": [],
+    "src/utils/options.ts": [],
+    "src/vite-env.d.ts": [],
+    "tsconfig.json": [],
+    "vite.config.ts": []
+  }
+}
