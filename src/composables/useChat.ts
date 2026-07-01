@@ -33,66 +33,57 @@ let captureInterval: ReturnType<typeof setInterval> | null = null;
 const FRAME_INTERVAL = 100; // 每100ms捕获一帧
 
 // ─── default data ──────────────────────────────────────────────────────────
-function createDefaultData(): {
-  phone: PhoneConfig;
-  setting: SettingConfig;
-  users: User[];
-  dialogs: Dialog[];
-} {
-  return {
-    phone: reactive<PhoneConfig>({
-      single: 4,
-      wifi: 4,
-      wifi_single: 3,
-      time_hour: "12",
-      time_mini: "00",
-      battery_charge: 0,
-      battery_amount: 50,
-      ear: 0,
-    }),
-    setting: reactive<SettingConfig>({
-      message: 1,
-      title: "甜甜",
-      voice: 0,
-      background: "static/app/images/background-ddd.jpg",
-      date_year: "",
-      date_month: "",
-      date_day: "",
-      date_xinqi: "",
-      date_shiduan: "",
-      date_hour: "12",
-      date_min: "41",
-      dialog_content: "",
-      dialog_money: 88,
-      dialog_voice: 2,
-      dialog_voice_isread: "0",
-      dialog_repacket_remark: "恭喜发财，大吉大利",
-      dialog_trans_remark: "请收款",
-      customEmojis: [],
-    }),
-    users: reactive<User[]>([
-      {
-        name: "微信对话生成器",
-        image: "./static/app/images/user-ddd.jpg",
-        is_me: true,
-        selected: true,
-      },
-      {
-        id: "user-2",
-        name: "甜甜",
-        image: "static/app/images/user2.png",
-        is_me: false,
-        selected: false,
-      },
-    ]),
-    dialogs: reactive<Dialog[]>([]),
-  };
-}
+const state = {
+  phone: reactive<PhoneConfig>({
+    single: 4,
+    wifi: 4,
+    wifi_single: 3,
+    time_hour: "12",
+    time_mini: "00",
+    battery_battery_charge: 0,
+    battery_amount: 50,
+    ear: 0,
+  }),
+  setting: reactive<SettingConfig>({
+    message: 1,
+    title: "甜甜",
+    voice: 0,
+    background: "static/app/images/background-ddd.jpg",
+    date_year: "",
+    date_month: "",
+    date_day: "",
+    date_xinqi: "",
+    date_shiduan: "",
+    date_hour: "12",
+    date_min: "41",
+    dialog_content: "",
+    dialog_money: 88,
+    dialog_voice: 2,
+    dialog_voice_isread: "0",
+    dialog_repacket_remark: "恭喜发财，大吉大利",
+    dialog_trans_remark: "请收款",
+    customEmojis: [],
+  }),
+  users: reactive<User[]>([
+    {
+      name: "微信对话生成器",
+      image: "./static/app/images/user-ddd.jpg",
+      is_me: true,
+      selected: true,
+    },
+    {
+      id: "user-2",
+      name: "甜甜",
+      image: "static/app/images/user2.png",
+      is_me: false,
+      selected: false,
+    },
+  ]),
+  dialogs: reactive<Dialog[]>([]),
+};
 
-// ─── export composable ──────────────────────────────────────────────────────
 export function useChat() {
-  const data = createDefaultData();
-  const { phone, setting, users, dialogs } = data;
+  const { phone, setting, users, dialogs } = state;
 
   // ── localStorage persistence ──────────────────────────────────────────────
   const STORAGE_KEY_USERS = "weichat_users";
