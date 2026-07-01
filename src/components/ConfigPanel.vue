@@ -7,7 +7,6 @@ const {
   phone,
   setting,
   users,
-  dialogs,
   getSender,
   setUserImage,
   selectUser,
