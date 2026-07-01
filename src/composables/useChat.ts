@@ -1,9 +1,36 @@
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import type { Dialog, User, PhoneConfig, SettingConfig } from "../types/index";
 import { moneyFormat, getVoiceLength } from "../utils/index";
-
 // ─── helpers ───────────────────────────────────────────────────────────────
 const $ = (sel: string) => document.querySelector(sel);
+
+// gif.js 类型声明
+declare global {
+  interface Window {
+    GIF: import("../types/index").GifConstructor;
+    html2canvas: (
+      element: HTMLElement,
+      options?: Record<string, unknown>,
+    ) => Promise<HTMLCanvasElement>;
+  }
+}
+
+// 录制状态
+interface RecordingState {
+  isRecording: boolean;
+  frameCount: number;
+  progress: number;
+}
+
+const recordingState = reactive<RecordingState>({
+  isRecording: false,
+  frameCount: 0,
+  progress: 0,
+});
+
+let gifInstance: import("../types/index").GIFInstance | null = null;
+let captureInterval: ReturnType<typeof setInterval> | null = null;
+const FRAME_INTERVAL = 100; // 每100ms捕获一帧
 
 // ─── default data ──────────────────────────────────────────────────────────
 function createDefaultData(): {
@@ -54,6 +81,8 @@ function createDefaultData(): {
         id: "user-2",
         name: "甜甜",
         image: "static/app/images/user2.png",
+        is_me: false,
+        selected: false,
       },
     ]),
     dialogs: reactive<Dialog[]>([]),
@@ -64,6 +93,46 @@ function createDefaultData(): {
 export function useChat() {
   const data = createDefaultData();
   const { phone, setting, users, dialogs } = data;
+
+  // ── localStorage persistence ──────────────────────────────────────────────
+  const STORAGE_KEY_USERS = "weichat_users";
+  const STORAGE_KEY_DIALOGS = "weichat_dialogs";
+
+  function saveToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+      localStorage.setItem(STORAGE_KEY_DIALOGS, JSON.stringify(dialogs));
+    } catch (e) {
+      console.warn("保存数据到 localStorage 失败:", e);
+    }
+  }
+
+  function loadFromStorage() {
+    try {
+      const savedUsers = localStorage.getItem(STORAGE_KEY_USERS);
+      const savedDialogs = localStorage.getItem(STORAGE_KEY_DIALOGS);
+      if (savedUsers) {
+        const parsed = JSON.parse(savedUsers);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          users.splice(0, users.length, ...parsed);
+        }
+      }
+      if (savedDialogs) {
+        const parsed = JSON.parse(savedDialogs);
+        if (Array.isArray(parsed)) {
+          dialogs.splice(0, dialogs.length, ...parsed);
+        }
+      }
+    } catch (e) {
+      console.warn("从 localStorage 加载数据失败:", e);
+    }
+  }
+
+  // 启动时加载已保存的数据
+  loadFromStorage();
+
+  // 监听变化自动保存
+  watch([users, dialogs], saveToStorage, { deep: true });
 
   // ── user helpers ──────────────────────────────────────────────────────────
   function getMe(): User {
@@ -114,7 +183,7 @@ export function useChat() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      users[index].image = reader.result;
+      users[index].image = reader.result as string;
     };
     reader.readAsDataURL(file);
   }
@@ -135,7 +204,7 @@ export function useChat() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      setting.background = reader.result;
+      setting.background = reader.result as string;
     };
     reader.readAsDataURL(file);
   }
@@ -151,7 +220,10 @@ export function useChat() {
   // ── dialog management ────────────────────────────────────────────────────
   let dialogIdCounter = 0;
 
-  function getDialogDefaults(type: Dialog["type"], overrides: Partial<Dialog> = {}): Dialog {
+  function getDialogDefaults(
+    type: Dialog["type"],
+    overrides: Partial<Dialog> = {},
+  ): Dialog {
     return {
       id: ++dialogIdCounter,
       type,
@@ -194,7 +266,9 @@ export function useChat() {
     if (setting.date_xinqi) timeParts.push(setting.date_xinqi);
     if (setting.date_shiduan) timeParts.push(setting.date_shiduan);
     if (setting.date_hour || setting.date_min) {
-      const timeStr = [setting.date_hour, setting.date_min].filter(Boolean).join(":");
+      const timeStr = [setting.date_hour, setting.date_min]
+        .filter(Boolean)
+        .join(":");
       if (timeStr) timeParts.push(timeStr);
     }
 
@@ -227,7 +301,7 @@ export function useChat() {
         getDialogDefaults("image", {
           user_id: users.indexOf(sender),
           is_me: sender.is_me,
-          image: reader.result,
+          image: reader.result as string,
         }),
       );
     };
@@ -252,7 +326,7 @@ export function useChat() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      setting.customEmojis.push(reader.result);
+      setting.customEmojis.push(reader.result as string);
     };
     reader.readAsDataURL(file);
     (event.target as HTMLInputElement).value = "";
@@ -353,20 +427,30 @@ export function useChat() {
   }
 
   // ── time options ──────────────────────────────────────────────────────────
-  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
-  const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    String(i).padStart(2, "0"),
+  );
+  const minutes = Array.from({ length: 60 }, (_, i) =>
+    String(i).padStart(2, "0"),
+  );
 
   function initPhoneTime() {
     const hourSelect = $(".edit-phone-time-hour") as HTMLSelectElement | null;
     const miniSelect = $(".edit-phone-time-mini") as HTMLSelectElement | null;
     if (hourSelect) {
       hourSelect.innerHTML = hours
-        .map((h) => `<option value="${h}" ${h === phone.time_hour ? "selected" : ""}>${h}</option>`)
+        .map(
+          (h) =>
+            `<option value="${h}" ${h === phone.time_hour ? "selected" : ""}>${h}</option>`,
+        )
         .join("");
     }
     if (miniSelect) {
       miniSelect.innerHTML = minutes
-        .map((m) => `<option value="${m}" ${m === phone.time_mini ? "selected" : ""}>${m}</option>`)
+        .map(
+          (m) =>
+            `<option value="${m}" ${m === phone.time_mini ? "selected" : ""}>${m}</option>`,
+        )
         .join("");
     }
   }
@@ -405,21 +489,80 @@ export function useChat() {
       });
   }
 
-  // ── GIF recording (placeholder) ──────────────────────────────────────────
+  // ── GIF recording ───────────────────────────────────────────────────────
+  function captureFrame() {
+    const phoneEl = $("#element-to-record") as HTMLElement | null;
+    if (!phoneEl || !recordingState.isRecording) return;
+    if (typeof window.html2canvas === "undefined") return;
+
+    window
+      .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 1 })
+      .then((canvas) => {
+        if (gifInstance) {
+          gifInstance.addFrame(canvas, { delay: FRAME_INTERVAL, copy: true });
+          recordingState.frameCount++;
+        }
+      })
+      .catch((err) => console.error("捕获帧失败:", err));
+  }
+
   function startRecording() {
-    alert("开始录制...（完整 GIF 录制功能可参考原 chat.bundle.js 继续扩展）");
-    const btnStart = $("#btn-start-recording") as HTMLButtonElement | null;
-    const btnStop = $("#btn-stop-recording") as HTMLButtonElement | null;
-    if (btnStart) btnStart.disabled = true;
-    if (btnStop) btnStop.disabled = false;
+    if (recordingState.isRecording) return;
+    const phoneEl = $("#element-to-record") as HTMLElement | null;
+    if (!phoneEl) {
+      alert("找不到要录制的元素");
+      return;
+    }
+    if (typeof window.GIF === "undefined") {
+      alert("GIF 库未加载，请刷新页面");
+      return;
+    }
+
+    recordingState.isRecording = true;
+    recordingState.frameCount = 0;
+    recordingState.progress = 0;
+
+    // 创建 GIF 实例，workerScript 指向 public 目录
+    gifInstance = new window.GIF({
+      workers: 2,
+      quality: 10,
+      width: phoneEl.offsetWidth,
+      height: phoneEl.offsetHeight,
+      workerScript: "/static/app/js/gif.worker.js",
+    });
+
+    gifInstance.on("progress", (p: number) => {
+      recordingState.progress = Math.round(p * 100);
+    });
+
+    gifInstance.on("finished", (blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = "wechat-chat.gif";
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+      recordingState.progress = 0;
+    });
+
+    // 定时捕获帧
+    captureFrame();
+    captureInterval = setInterval(captureFrame, FRAME_INTERVAL);
   }
 
   function stopRecording() {
-    const btnStart = $("#btn-start-recording") as HTMLButtonElement | null;
-    const btnStop = $("#btn-stop-recording") as HTMLButtonElement | null;
-    if (btnStart) btnStart.disabled = false;
-    if (btnStop) btnStop.disabled = true;
-    alert('录制完成，可点击"生成GIF"按钮合成动态图片');
+    if (!recordingState.isRecording) return;
+    recordingState.isRecording = false;
+    if (captureInterval) {
+      clearInterval(captureInterval);
+      captureInterval = null;
+    }
+    if (gifInstance) {
+      gifInstance.render();
+      gifInstance = null;
+    }
   }
 
   return {
@@ -450,6 +593,7 @@ export function useChat() {
     addTransferDialog,
     deleteDialog,
     cleanDialogs,
+    initPhoneTime,
     redpacketGet,
     transferGet,
     getVoiceLength,
@@ -457,12 +601,8 @@ export function useChat() {
     hours,
     minutes,
     save,
+    recordingState,
+    startRecording,
+    stopRecording,
   };
-}
-
-// 声明 window.html2canvas（由 index.html 动态注入）
-declare global {
-  interface Window {
-    html2canvas: (element: HTMLElement, options?: Record<string, unknown>) => Promise<HTMLCanvasElement>;
-  }
 }

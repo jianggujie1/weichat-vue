@@ -163,22 +163,19 @@ npm run preview
 - [x] 核心业务逻辑用 Vue 3 重写（useChat.ts）
 - [x] 头像上传、对话 CRUD、红包/转账领取（含对方同步）
 - [x] 生成图片功能（html2canvas + 2x 缩放下载）
+- [x] **GIF 录制**（gif.js 按帧捕获 + 渲染下载，100ms/帧）
+- [x] **localStorage 持久化**（users + dialogs 自动保存/加载）
 - [x] 项目可正常 build & 运行
 - [x] 所有已知 Bug 已修复
 
 ### 🔲 待继续（按优先级）
-- [ ] **GIF 录制完整实现**：目前 `startRecording` / `stopRecording` 为占位逻辑，需基于 `gif.js` 按帧捕获 `#element-to-record`
 - [ ] **视频录制**：引入 `MediaRecorder` 或结合现有工具实现
 - [ ] **预设用户库**：接入 `auto-gen.js` 中大量预设头像，用户一键选择
-- [ ] **本地存储**：`localStorage` 持久化 `users` + `dialogs`，刷新不丢失
 - [ ] **对话时间戳渲染**：将 `date_year/month/day/xinqi/shiduan/hour/min` 写入每条对话的显示文案
 - [ ] **生成图片直接下载**：移除 lightbox 中间步骤，直接触发 `<a download>`
 - [ ] **删除旧 bundle**：确认所有逻辑迁移完成后，移除 `common.bundle.js` 和 `chat.bundle.js`
 - [ ] **组件拆分**：将手机预览、配置面板拆分为独立 `.vue` 组件
-- [ ] **单元测试**：给 `useChat.ts` 添加 vitest 测试
 - [ ] **国际化支持**：面板文案支持中/英文切换
-
----
 
 ## 八、技术栈
 

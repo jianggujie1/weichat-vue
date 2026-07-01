@@ -946,6 +946,57 @@
   transform: scale(0.97);
 }
 
+.cfg-btn-warning {
+  background: #fa8c16;
+  color: var(--white);
+}
+
+.cfg-btn-warning:hover {
+  background: #d97210;
+  box-shadow: 0 2px 8px rgba(250, 140, 22, 0.3);
+}
+
+.cfg-btn-warning:active {
+  transform: scale(0.97);
+}
+
+.cfg-btn-secondary {
+  background: #6c757d;
+  color: var(--white);
+}
+
+.cfg-btn-secondary:hover {
+  background: #5a6268;
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.cfg-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.cfg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recording-indicator {
+  color: #fa5151;
+  font-size: 12px;
+  margin-left: 8px;
+  animation: blink 1s infinite;
+}
+
+.recording-progress {
+  color: #fa8c16;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    右侧手机预览（保留原始样式兼容）
    ═══════════════════════════════════════════════════════════════════ */

@@ -67,3 +67,33 @@ export interface EmojiItem {
   url: string
   emoji: string
 }
+// gif.js 类型声明
+export interface GifOptions {
+  workers?: number
+  quality?: number
+  workerScript?: string
+  width?: number
+  height?: number
+  repeat?: number
+  background?: string
+  transparent?: string | null
+}
+
+export interface GIFInstance {
+  addFrame(image: HTMLCanvasElement | HTMLImageElement, options?: Record<string, unknown>): void
+  on(event: "finished", cb: (blob: Blob) => void): void
+  on(event: "progress", cb: (progress: number) => void): void
+  render(): void
+  abort(): void
+}
+
+export interface GifConstructor {
+  new (options?: GifOptions): GIFInstance
+}
+
+// 录制状态
+export interface RecordingState {
+  isRecording: boolean
+  frameCount: number
+  progress: number
+}

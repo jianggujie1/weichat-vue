@@ -8,8 +8,6 @@ const {
   setting,
   users,
   dialogs,
-  getMe,
-  getOther,
   getSender,
   getUserById,
   setUserImage,
@@ -19,7 +17,6 @@ const {
   onBackgroundLoad,
   setBackground,
   deleteBackground,
-  onBatteryChange,
   addTextDialog,
   addNoticeDialog,
   addImageDialog,
@@ -100,7 +97,7 @@ const presetEmojis = [
 ];
 
 // 点击表情
-function handleEmojiClick(emoji) {
+function handleEmojiClick(emoji: { url: string; emoji?: string }) {
   if (emoji.url) {
     // 自定义表情（图片）
     addEmojiDialog(emoji.url);
@@ -112,6 +109,11 @@ function handleEmojiClick(emoji) {
   showEmojiPicker.value = false;
 }
 
+// 触发文件选择（自定义表情）
+function triggerEmojiFileInput() {
+  emojiInputRef.value?.click();
+}
+
 // 切换表情选择器
 function toggleEmojiPicker() {
   showEmojiPicker.value = !showEmojiPicker.value;
@@ -119,7 +121,7 @@ function toggleEmojiPicker() {
 
 // Tab 切换状态
 const activeTab = ref("tabContent2");
-function switchTab(tabId) {
+function switchTab(tabId: string) {
   activeTab.value = tabId;
 }
 </script>
@@ -494,7 +496,7 @@ function switchTab(tabId) {
                     <span class="emoji-delete" @click.stop="removeCustomEmoji(index)">×</span>
                   </div>
                   <div class="emoji-add"
-                    @click="emojiInputRef.value?.click()">
+                    @click="triggerEmojiFileInput()">
                     +
                     <input
                       ref="emojiInputRef"
