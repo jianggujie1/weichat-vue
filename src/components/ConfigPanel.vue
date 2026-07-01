@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useChat } from "@/composables/useChat"; // Adjusted path based on standard convention, will verify
+import { ref, onMounted, onUnmounted } from "vue";
+import { useChat } from "@/composables/useChat";
 
 const chat = useChat();
 const {
@@ -106,6 +106,31 @@ function triggerEmojiFileInput() {
 function toggleEmojiPicker() {
   showEmojiPicker.value = !showEmojiPicker.value;
 }
+
+const contentRef = ref<HTMLTextAreaElement | null>(null);
+
+function handleKeyDown(e: KeyboardEvent) {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTextDialog();
+    } else if (e.key === 'm') {
+      e.preventDefault();
+      addTransferDialog();
+    }
+  }
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    contentRef.value?.focus();
+  }, 100);
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <template>
@@ -242,7 +267,7 @@ function toggleEmojiPicker() {
         <h3>添加对话</h3>
         <div class="cfg-row">
           <label>文字内容</label>
-          <textarea v-model="setting.dialog_content" rows="3"></textarea>
+          <textarea ref="contentRef" v-model="setting.dialog_content" rows="3"></textarea>
         </div>
         <div class="cfg-row">
           <label>红包/转账金额</label>
@@ -322,7 +347,7 @@ function toggleEmojiPicker() {
           <input v-model="setting.dialog_trans_remark" type="text" />
         </div>
         <div class="cfg-btn-group">
-          <button class="btn-text" @click="addTextDialog">+ 文字</button>
+          <button class="btn-text" @click="addTextDialog">+ 文字 (Ctrl+Enter)</button>
           <button class="btn-time" @click="addNoticeDialog">+ 时间</button>
           <div class="cfg-file-btn btn-image">
             + 图片
@@ -330,7 +355,7 @@ function toggleEmojiPicker() {
           </div>
           <button class="btn-voice" @click="addVoiceDialog">+ 语音</button>
           <button class="btn-redpacket" @click="addRedpacketDialog">+ 红包</button>
-          <button class="btn-transfer" @click="addTransferDialog">+ 转账</button>
+          <button class="btn-transfer" @click="addTransferDialog">+ 转账 (Ctrl+M)</button>
           <button class="btn-emoji" @click="toggleEmojiPicker">+ 表情</button>
         </div>
 

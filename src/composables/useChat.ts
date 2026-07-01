@@ -40,7 +40,7 @@ const state = {
     wifi_single: 3,
     time_hour: "12",
     time_mini: "00",
-    battery_battery_charge: 0,
+    battery_charge: 0,
     battery_amount: 50,
     ear: 0,
   }),
@@ -244,7 +244,7 @@ export function useChat() {
         content: setting.dialog_content,
       }),
     );
-    setting.dialog_content = "";
+    // setting.dialog_content = ""; // Stop clearing content to allow repeated additions
   }
 
   function addNoticeDialog() {
@@ -279,7 +279,7 @@ export function useChat() {
         content,
       }),
     );
-    setting.dialog_content = "";
+    // setting.dialog_content = ""; // Stop clearing content to allow repeated additions
   }
 
   function addImageDialog(event: Event) {

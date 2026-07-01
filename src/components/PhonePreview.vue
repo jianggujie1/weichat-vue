@@ -56,10 +56,9 @@ const {
               ]"
             >
               <span
-                ><font :style="{ width: phone.battery_amount + '%' }"
-                      >电量</font
-                    ><i></i
-                  ></span>
+                ><font :style="{ width: phone.battery_amount + '%' }">电量</font
+                ><i></i
+              ></span>
             </div>
           </div>
 
@@ -103,19 +102,13 @@ const {
                   { 'wechat-dialog-right': dialog.is_me },
                 ]"
               >
-                <div
-                  v-if="dialog.type !== 'notice'"
-                  class="wechat-dialog-face"
-                >
+                <div v-if="dialog.type !== 'notice'" class="wechat-dialog-face">
                   <img :src="getUserById(dialog.user_id ?? 0).image" />
                 </div>
 
                 <!-- 文字 -->
                 <template v-if="dialog.type === 'text'">
-                  <div
-                    class="wechat-dialog-text"
-                    v-html="dialog.content"
-                  ></div>
+                  <div class="wechat-dialog-text" style="white-space: pre-wrap;" v-html="dialog.content"></div>
                 </template>
 
                 <!-- 图片 -->
@@ -171,8 +164,7 @@ const {
                 <!-- 转账 / 红包 -->
                 <template
                   v-if="
-                    dialog.type === 'transfer' ||
-                    dialog.type === 'redpacket'
+                    dialog.type === 'transfer' || dialog.type === 'redpacket'
                   "
                 >
                   <div
@@ -194,9 +186,7 @@ const {
                       <i></i>
                       <div>
                         <span v-if="dialog.type === 'transfer'"
-                              >¥{{
-                                moneyFormat(dialog.money ?? 0, 2, "", false)
-                              }}</span
+                          >¥{{ moneyFormat(dialog.money ?? 0, 2, "") }}</span
                         >
                         <font v-if="dialog.type === 'transfer'">{{
                           dialog.remark
@@ -205,21 +195,15 @@ const {
                           dialog.remark
                         }}</span>
                         <font
-                          v-if="
-                            dialog.type === 'redpacket' && dialog.is_get
-                          "
+                          v-if="dialog.type === 'redpacket' && dialog.is_get"
                         >
                           已领取</font
                         >
                       </div>
                     </div>
                     <div class="wechat-dialog-trans-bottom">
-                      <span v-if="dialog.type === 'transfer'"
-                            >微信转账</span
-                      >
-                      <span v-if="dialog.type === 'redpacket'"
-                            >微信红包</span
-                      >
+                      <span v-if="dialog.type === 'transfer'">微信转账</span>
+                      <span v-if="dialog.type === 'redpacket'">微信红包</span>
                     </div>
                   </div>
                 </template>
@@ -272,9 +256,7 @@ const {
                 <template v-else>输入框</template>
               </div>
               <div class="wechat-bottom-icon wechat-emoji-icon">表情</div>
-              <div class="wechat-bottom-icon wechat-more-icon">
-                更多功能
-              </div>
+              <div class="wechat-bottom-icon wechat-more-icon">更多功能</div>
             </div>
           </div>
           <div class="phone-bottom-bar"><i>返回桌面</i></div>
