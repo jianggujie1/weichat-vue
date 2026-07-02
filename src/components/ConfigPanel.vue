@@ -6,6 +6,7 @@ const chat = useChat();
 const {
   phone,
   setting,
+  dialogs,
   users,
   getSender,
   setUserImage,
@@ -23,10 +24,10 @@ const {
   addVoiceDialog,
   addRedpacketDialog,
   addTransferDialog,
+  batchImport,
   cleanDialogs,
   save,
 } = chat;
-
 // Tab 切换状态
 const activeTab = ref("tabContent2");
 function switchTab(tabId: string) {
@@ -104,6 +105,34 @@ function triggerEmojiFileInput() {
 
 function toggleEmojiPicker() {
   showEmojiPicker.value = !showEmojiPicker.value;
+}
+
+// ── batch import ────────────────────────────────────────────────────────────
+const imageCache = ref<string[]>([]);
+const batchMyName = ref("我");
+
+function handleImportImages(e: Event) {
+  imageCache.value = [];
+  const files = (e.target as HTMLInputElement).files;
+  if (!files) return;
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      imageCache.value.push(ev.target!.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function handleBatchImport() {
+  if (!setting.batch_text.trim()) {
+    alert("请输入批量导入内容");
+    return;
+  }
+  const countBefore = dialogs.length;
+  batchImport(setting.batch_text, batchMyName.value, imageCache.value);
+  const countAfter = dialogs.length;
+  alert(`批量导入完成！\n新增 ${countAfter - countBefore} 条对话`);
 }
 
 const contentRef = ref<HTMLTextAreaElement | null>(null);
@@ -382,6 +411,46 @@ onUnmounted(() => {
           </div>
           <div class="emoji-hint">点击表情添加到输入框，自定义表情点击后直接插入聊天</div>
         </div>
+      </div>
+
+      <!-- 批量导入 -->
+      <div class="cfg-section">
+        <h3>批量导入对话</h3>
+        <p class="cfg-hint">
+          格式：<code>姓名: 内容</code>，支持多行文本、图片、语音、红包、转账、时间、系统消息
+        </p>
+        <div class="cfg-row">
+          <label>预载图片（可选）</label>
+          <input type="file" multiple accept="image/*" @change="handleImportImages" />
+        </div>
+        <div class="cfg-row">
+          <label>主角名称</label>
+          <input v-model="batchMyName" type="text" style="width: 80px" />
+          <span style="color:#999; font-size:12px; margin-left:6px;">（识别为绿色气泡）</span>
+        </div>
+        <textarea
+          v-model="setting.batch_text"
+          style="width:100%; height:160px; border:1px solid #ddd; border-radius:8px; padding:10px; font-size:12px; box-sizing:border-box; outline:none; line-height:1.5; resize:vertical;"
+          placeholder="格式示例：
+我: 吃了没？
+对方: [图片:1]
+我: 还没呢
+想吃火锅
+时间: 12:00
+对方: [语音:5]
+我: [红包:188.88:恭喜发财:0]
+对方: [转账:50:请你喝奶茶:1]"
+        ></textarea>
+        <div class="cfg-row" style="margin-top:8px;">
+          <span style="color:#999; font-size:11px;">
+            [图片:1] / [语音:5] / [红包:金额:备注:0/1] / [转账:金额:备注:0/1] / 时间: / 系统:
+          </span>
+        </div>
+        <button
+          class="cfg-btn cfg-btn-primary"
+          style="margin-top:8px;"
+          @click="handleBatchImport"
+        >批量导入对话</button>
       </div>
 
       <div class="cfg-section">

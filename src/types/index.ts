@@ -59,6 +59,7 @@ export interface SettingConfig {
   dialog_repacket_remark: string
   dialog_trans_remark: string
   customEmojis: string[]
+  batch_text: string;
 }
 
 // 表情项

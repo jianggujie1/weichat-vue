@@ -63,7 +63,8 @@ const state = {
     dialog_repacket_remark: "恭喜发财，大吉大利",
     dialog_trans_remark: "请收款",
     customEmojis: [],
-  }),
+    batch_text: "",
+   }),
   users: reactive<User[]>([
     {
       name: "微信对话生成器",
@@ -85,36 +86,57 @@ const state = {
 export function useChat() {
   const { phone, setting, users, dialogs } = state;
 
-  // ── localStorage persistence ──────────────────────────────────────────────
   const STORAGE_KEY_USERS = "weichat_users";
   const STORAGE_KEY_DIALOGS = "weichat_dialogs";
-
+  const STORAGE_KEY_SETTING = "weichat_setting";
   function saveToStorage() {
     try {
       localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
+    } catch (e: unknown) {
+      console.warn("保存 users 失败:", e);
+    }
+    try {
+      // 排除自定义表情（图片）以避免超出 localStorage 配额
+      const { customEmojis, ...rest } = setting as SettingConfig;
+      localStorage.setItem(STORAGE_KEY_SETTING, JSON.stringify(rest));
+    } catch (e: unknown) {
+      console.warn("保存 setting 失败:", e);
+    }
+    try {
       localStorage.setItem(STORAGE_KEY_DIALOGS, JSON.stringify(dialogs));
-    } catch (e) {
-      console.warn("保存数据到 localStorage 失败:", e);
+    } catch (e: unknown) {
+      console.warn("保存 dialogs 失败:", e);
     }
   }
 
   function loadFromStorage() {
     try {
+      const savedSetting = localStorage.getItem(STORAGE_KEY_SETTING);
+      if (savedSetting) {
+        try {
+          const parsedSetting = JSON.parse(savedSetting) as Partial<SettingConfig>;
+          Object.assign(setting, parsedSetting);
+        } catch (e: unknown) {
+          console.warn("解析 setting 失败:", e);
+        }
+      }
+
       const savedUsers = localStorage.getItem(STORAGE_KEY_USERS);
-      const savedDialogs = localStorage.getItem(STORAGE_KEY_DIALOGS);
       if (savedUsers) {
-        const parsed = JSON.parse(savedUsers);
+        const parsed = JSON.parse(savedUsers) as User[];
         if (Array.isArray(parsed) && parsed.length > 0) {
           users.splice(0, users.length, ...parsed);
         }
       }
+
+      const savedDialogs = localStorage.getItem(STORAGE_KEY_DIALOGS);
       if (savedDialogs) {
-        const parsed = JSON.parse(savedDialogs);
+        const parsed = JSON.parse(savedDialogs) as Dialog[];
         if (Array.isArray(parsed)) {
           dialogs.splice(0, dialogs.length, ...parsed);
         }
       }
-    } catch (e) {
+    } catch (e: unknown) {
       console.warn("从 localStorage 加载数据失败:", e);
     }
   }
@@ -122,8 +144,7 @@ export function useChat() {
   // 启动时加载已保存的数据
   loadFromStorage();
 
-  // 监听变化自动保存
-  watch([users, dialogs], saveToStorage, { deep: true });
+  watch([users, dialogs, setting], saveToStorage, { deep: true });
 
   // ── user helpers ──────────────────────────────────────────────────────────
   function getMe(): User {
@@ -556,6 +577,122 @@ export function useChat() {
     }
   }
 
+  // ── batch import ──────────────────────────────────────────────────────────
+  function batchImport(text: string, myName: string, imageCache: string[]) {
+    if (!text.trim()) return;
+    const lines = text.split("\n");
+    const batch: Dialog[] = [];
+    let localId = 0;
+
+    for (const line of lines) {
+      if (!line.trim()) continue;
+
+      const match = line.match(/^(.+?)[:](.*)$/);
+
+      if (match) {
+        const name = match[1].trim();
+        const content = match[2].trim();
+        const isMe = name === myName;
+
+        const sender = isMe
+          ? users.find((u) => u.is_me) || users[0]
+          : users.find((u) => !u.is_me) || users[1] || users[0];
+
+        let item: Dialog = getDialogDefaults("text", {
+          user_id: users.indexOf(sender),
+          is_me: sender.is_me,
+          content,
+        });
+
+        // 时间/系统消息
+        if (name === "时间") {
+          item = getDialogDefaults("notice", {
+            content: "  " + content,
+            is_system: false,
+          });
+          batch.push(item);
+          continue;
+        } else if (name === "系统") {
+          item = getDialogDefaults("notice", {
+            content,
+            is_system: true,
+          });
+          batch.push(item);
+          continue;
+        }
+
+        // 图片 [图片:N]
+        const imgMatch = content.match(/\[图片:(\d+)\]/);
+        if (imgMatch) {
+          const imgIdx = parseInt(imgMatch[1]) - 1;
+          if (imageCache[imgIdx]) {
+            item = getDialogDefaults("image", {
+              user_id: users.indexOf(sender),
+              is_me: sender.is_me,
+              image: imageCache[imgIdx],
+            });
+            batch.push(item);
+            continue;
+          }
+        }
+
+        // 语音 [语音:N]
+        const voiceMatch = content.match(/\[语音:(\d+)\]/);
+        if (voiceMatch) {
+          item = getDialogDefaults("voice", {
+            user_id: users.indexOf(sender),
+            is_me: sender.is_me,
+            time: parseInt(voiceMatch[1]),
+            isread: "1",
+          });
+          batch.push(item);
+          continue;
+        }
+
+        // 红包 [红包:金额:备注:是否领取(0未领/1已领)]
+        const rpMatch = content.match(/\[红包:([\d\.]+):?(.*?):?(\d)?\]/);
+        if (rpMatch) {
+          item = getDialogDefaults("redpacket", {
+            user_id: users.indexOf(sender),
+            is_me: sender.is_me,
+            money: parseFloat(rpMatch[1]) || 0,
+            remark: rpMatch[2] || "恭喜发财",
+            is_get: rpMatch[3] === "0" ? false : true,
+          });
+          batch.push(item);
+          continue;
+        }
+
+        // 转账 [转账:金额:备注:是否领取(0未收/1已收)]
+        const tfMatch = content.match(/\[转账:([\d\.]+):?(.*?):?(\d)?\]/);
+        if (tfMatch) {
+          const tfRemark = tfMatch[2] || "转账给你";
+          const tfIsGet = tfMatch[3] === "1";
+          item = getDialogDefaults("transfer", {
+            user_id: users.indexOf(sender),
+            is_me: sender.is_me,
+            money: parseFloat(tfMatch[1]) || 0,
+            remark: tfIsGet ? "已被接收" : tfRemark,
+            is_get: tfIsGet,
+          });
+          batch.push(item);
+          continue;
+        }
+
+        // 普通文本
+        batch.push(item);
+      } else if (batch.length > 0) {
+        // 没有"姓名:"前缀的行，合并到上一条文本消息中
+        const last = batch[batch.length - 1];
+        if (last.type === "text") {
+          last.content += "\n" + line;
+        }
+      }
+    }
+
+    dialogs.push(...batch);
+  }
+
   return {
     phone,
     setting,
@@ -595,5 +732,6 @@ export function useChat() {
     recordingState,
     startRecording,
     stopRecording,
+    batchImport,
   };
 }
