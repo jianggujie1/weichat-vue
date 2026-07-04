@@ -144,6 +144,21 @@ export function useChat() {
   // 启动时加载已保存的数据
   loadFromStorage();
 
+  // 加载预设自定义表情（放置于 public/static/emojis/ 目录下）
+  [
+    "/static/emojis/切图需求.png",
+    "/static/emojis/切图需求 (1).png",
+    "/static/emojis/切图需求 (2).png",
+    "/static/emojis/切图需求 (3).png",
+    "/static/emojis/切图需求 (4).png",
+  ]
+    .map((p) => encodeURI(p))
+    .forEach((path) => {
+      if (!setting.customEmojis.includes(path)) {
+        setting.customEmojis.push(path);
+      }
+    });
+
   watch([users, dialogs, setting], saveToStorage, { deep: true });
 
   // ── user helpers ──────────────────────────────────────────────────────────
