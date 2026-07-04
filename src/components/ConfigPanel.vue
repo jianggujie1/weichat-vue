@@ -171,6 +171,9 @@ onUnmounted(() => {
       <button :class="{ active: activeTab === 'tabContent2' }" @click="switchTab('tabContent2')">
         对话设置
       </button>
+      <button :class="{ active: activeTab === 'tabContent3' }" @click="switchTab('tabContent3')">
+        批量导入
+      </button>
     </div>
 
     <!-- 外观设置 -->
@@ -413,7 +416,17 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 批量导入 -->
+
+      <div class="cfg-section">
+        <div class="cfg-actions">
+          <button class="cfg-btn cfg-btn-danger" @click="cleanDialogs">清空对话</button>
+          <button class="cfg-btn cfg-btn-primary" @click="save">生成图片</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 批量导入 -->
+    <div v-show="activeTab === 'tabContent3'" class="cfg-body">
       <div class="cfg-section">
         <h3>批量导入对话</h3>
         <p class="cfg-hint">
@@ -451,13 +464,6 @@ onUnmounted(() => {
           style="margin-top:8px;"
           @click="handleBatchImport"
         >批量导入对话</button>
-      </div>
-
-      <div class="cfg-section">
-        <div class="cfg-actions">
-          <button class="cfg-btn cfg-btn-danger" @click="cleanDialogs">清空对话</button>
-          <button class="cfg-btn cfg-btn-primary" @click="save">生成图片</button>
-        </div>
       </div>
     </div>
   </div>
