@@ -463,7 +463,7 @@ onUnmounted(() => {
           格式：<code>姓名: 内容</code>，支持多行文本、图片、语音、红包、转账、时间、系统消息
           <br/>表情用法：预设表情（如 😀😃）直接输入文本中；自定义表情包用 <code>[表情:N]</code> 占位符，N 为表情在"自定义"列表中的顺序（从 1 开始）
         </p>
-        <div class="cfg-row">
+        <div class="cfg-row" style="flex-wrap:wrap;">
           <label>预载图片（可选）</label>
           <input type="file" multiple accept="image/*" @change="handleImportImages" />
         </div>
@@ -488,9 +488,9 @@ onUnmounted(() => {
 对方: [转账:50:请你喝奶茶:1]
 我: [表情:1]"
         ></textarea>
-        <div class="cfg-row" style="margin-top:8px;">
-          <button class="cfg-btn" style="margin-right:8px;" @click="toggleEmojiPickerBatch">表情</button>
-          <span style="color:#999; font-size:11px;">
+        <div class="cfg-row" style="flex-wrap:wrap; align-items:center;">
+          <button class="cfg-btn" style="margin-right:8px; flex-shrink:0;" @click="toggleEmojiPickerBatch">表情</button>
+          <span style="color:#999; font-size:11px; word-break:break-all;">
             [图片:1] / [语音:5] / [表情:1] / [红包:金额:备注:0/1] / [转账:金额:备注:0/1] / 时间: / 系统:
           </span>
         </div>
