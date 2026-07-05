@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { useChat } from "@/composables/useChat";
 
 const chat = useChat();
@@ -29,15 +29,17 @@ const {
   save,
 } = chat;
 // Tab 切换状态
-const activeTab = ref("tabContent2");
+const activeTab = ref("tabContent3");
 function switchTab(tabId: string) {
   activeTab.value = tabId;
 }
 
 // 表情选择器状态
 const showEmojiPicker = ref(false);
+const showEmojiPickerBatch = ref(false);
 const activeEmojiTab = ref("preset");
 const emojiInputRef = ref<HTMLInputElement | null>(null);
+const batchTextareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const presetEmojis = [
   { id: 1, url: "", emoji: "😀" },
@@ -105,6 +107,34 @@ function triggerEmojiFileInput() {
 
 function toggleEmojiPicker() {
   showEmojiPicker.value = !showEmojiPicker.value;
+}
+function toggleEmojiPickerBatch() {
+  showEmojiPickerBatch.value = !showEmojiPickerBatch.value;
+}
+
+async function handleBatchEmojiClick(emoji: { url: string; emoji?: string }, index?: number) {
+  const textarea = batchTextareaRef.value;
+  if (!textarea) return;
+
+  let insertText = "";
+  if (emoji.url) {
+    // 自定义表情：插入 [表情:N] 占位符
+    insertText = `[表情:${index! + 1}]`;
+  } else {
+    // 预设表情：直接插入 emoji 字符
+    insertText = emoji.emoji || "";
+  }
+
+  const start = textarea.selectionStart ?? setting.batch_text.length;
+  const end = textarea.selectionEnd ?? start;
+  const before = setting.batch_text.slice(0, start);
+  const after = setting.batch_text.slice(end);
+  setting.batch_text = before + insertText + after;
+
+  // 将光标移到插入文本之后
+  await nextTick();
+  textarea.selectionStart = textarea.selectionEnd = start + insertText.length;
+  textarea.focus();
 }
 
 // ── batch import ────────────────────────────────────────────────────────────
@@ -431,6 +461,7 @@ onUnmounted(() => {
         <h3>批量导入对话</h3>
         <p class="cfg-hint">
           格式：<code>姓名: 内容</code>，支持多行文本、图片、语音、红包、转账、时间、系统消息
+          <br/>表情用法：预设表情（如 😀😃）直接输入文本中；自定义表情包用 <code>[表情:N]</code> 占位符，N 为表情在"自定义"列表中的顺序（从 1 开始）
         </p>
         <div class="cfg-row">
           <label>预载图片（可选）</label>
@@ -442,23 +473,52 @@ onUnmounted(() => {
           <span style="color:#999; font-size:12px; margin-left:6px;">（识别为绿色气泡）</span>
         </div>
         <textarea
+          ref="batchTextareaRef"
           v-model="setting.batch_text"
           style="width:100%; height:160px; border:1px solid #ddd; border-radius:8px; padding:10px; font-size:12px; box-sizing:border-box; outline:none; line-height:1.5; resize:vertical;"
           placeholder="格式示例：
 我: 吃了没？
+我: 😀 笑一笑
 对方: [图片:1]
 我: 还没呢
 想吃火锅
 时间: 12:00
 对方: [语音:5]
 我: [红包:188.88:恭喜发财:0]
-对方: [转账:50:请你喝奶茶:1]"
+对方: [转账:50:请你喝奶茶:1]
+我: [表情:1]"
         ></textarea>
         <div class="cfg-row" style="margin-top:8px;">
+          <button class="cfg-btn" style="margin-right:8px;" @click="toggleEmojiPickerBatch">表情</button>
           <span style="color:#999; font-size:11px;">
-            [图片:1] / [语音:5] / [红包:金额:备注:0/1] / [转账:金额:备注:0/1] / 时间: / 系统:
+            [图片:1] / [语音:5] / [表情:1] / [红包:金额:备注:0/1] / [转账:金额:备注:0/1] / 时间: / 系统:
           </span>
         </div>
+
+        <div v-if="showEmojiPickerBatch" class="emoji-picker" @click.stop>
+          <div class="emoji-tabs">
+            <button :class="{ active: activeEmojiTab === 'preset' }" @click="activeEmojiTab = 'preset'">预设</button>
+            <button :class="{ active: activeEmojiTab === 'custom' }" @click="activeEmojiTab = 'custom'">自定义</button>
+          </div>
+          <div class="emoji-content">
+            <div v-if="activeEmojiTab === 'preset'" class="emoji-grid">
+              <span v-for="emoji in presetEmojis" :key="emoji.id" class="emoji-item" @click="handleBatchEmojiClick(emoji)">
+                {{ emoji.emoji }}
+              </span>
+            </div>
+            <div v-if="activeEmojiTab === 'custom'" class="emoji-grid">
+              <div v-for="(emoji, index) in setting.customEmojis" :key="index" class="emoji-item custom" @click="handleBatchEmojiClick({ url: emoji }, index)">
+                <img :src="emoji" alt="自定义表情" />
+              </div>
+              <div class="emoji-add" @click="triggerEmojiFileInput()">
+                +
+                <input ref="emojiInputRef" type="file" accept="image/*" style="display: none" @change="addCustomEmoji($event)" />
+              </div>
+            </div>
+          </div>
+          <div class="emoji-hint">点击预设表情直接插入，点击自定义表情插入 [表情:N] 占位符</div>
+        </div>
+
         <button
           class="cfg-btn cfg-btn-primary"
           style="margin-top:8px;"

@@ -694,6 +694,21 @@ export function useChat() {
           continue;
         }
 
+        // 表情 [表情:N]
+        const emojiMatch = content.match(/\[表情:(\d+)\]/);
+        if (emojiMatch) {
+          const emojiIdx = parseInt(emojiMatch[1]) - 1;
+          const emojiUrl = setting.customEmojis[emojiIdx];
+          if (emojiUrl) {
+            item = getDialogDefaults("image", {
+              user_id: users.indexOf(sender),
+              is_me: sender.is_me,
+              image: emojiUrl,
+            });
+            batch.push(item);
+            continue;
+          }
+        }
         // 普通文本
         batch.push(item);
       } else if (batch.length > 0) {
