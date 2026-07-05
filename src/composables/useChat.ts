@@ -146,11 +146,11 @@ export function useChat() {
 
   // 加载预设自定义表情（放置于 public/static/emojis/ 目录下）
   [
-    "/static/emojis/切图需求.png",
-    "/static/emojis/切图需求 (1).png",
-    "/static/emojis/切图需求 (2).png",
-    "/static/emojis/切图需求 (3).png",
-    "/static/emojis/切图需求 (4).png",
+    "/static/emojis/emoji1.png",
+    "/static/emojis/emoji2.png",
+    "/static/emojis/emoji3.png",
+    "/static/emojis/emoji4.png",
+    "/static/emojis/emoji5.png",
   ]
     .map((p) => encodeURI(p))
     .forEach((path) => {
