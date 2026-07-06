@@ -760,5 +760,6 @@ export function useChat() {
     previewImage,
     closePreview,
     recordingState,
+    batchImport,
   };
 }
