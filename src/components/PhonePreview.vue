@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useChat } from "@/composables/useChat";
+import { onMounted, onUnmounted } from "vue";
 
 const chat = useChat();
 const {
@@ -14,6 +15,70 @@ const {
   redpacketGet,
   transferGet,
 } = chat;
+
+// ── pinch-to-zoom ────────────────────────────────────────────────────────────
+let lastDistance = 0;
+let currentScale = 1;
+const MIN_SCALE = 0.3;
+const MAX_SCALE = 3;
+
+function getTouchDistance(t1: Touch, t2: Touch) {
+  const dx = t2.clientX - t1.clientX;
+  const dy = t2.clientY - t1.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function onTouchStart(e: TouchEvent) {
+  if (e.touches.length !== 2) return;
+  e.preventDefault();
+  lastDistance = getTouchDistance(e.touches[0], e.touches[1]);
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (e.touches.length !== 2) return;
+  e.preventDefault();
+  const dist = getTouchDistance(e.touches[0], e.touches[1]);
+  const delta = dist / lastDistance;
+  currentScale = Math.min(Math.max(currentScale * delta, MIN_SCALE), MAX_SCALE);
+  lastDistance = dist;
+  applyScale(currentScale);
+}
+
+function onTouchEnd(e: TouchEvent) {
+  if (e.touches.length < 2) {
+    lastDistance = 0;
+  }
+}
+
+function applyScale(scale: number) {
+  const content = document.querySelector(".phone-content") as HTMLElement | null;
+  if (!content) return;
+  content.style.transform = `scale(${scale})`;
+  const wrap = document.querySelector(".phone-wrap") as HTMLElement | null;
+  if (!wrap) return;
+  const baseW = 390;
+  const baseH = 844;
+  wrap.style.width = `${baseW * scale}px`;
+  wrap.style.height = `${baseH * scale}px`;
+}
+
+onMounted(() => {
+  const el = document.querySelector(".phone-wrap") as HTMLElement | null;
+  if (!el) return;
+  el.addEventListener("touchstart", onTouchStart, { passive: false });
+  el.addEventListener("touchmove", onTouchMove, { passive: false });
+  el.addEventListener("touchend", onTouchEnd);
+  el.addEventListener("touchcancel", onTouchEnd);
+});
+
+onUnmounted(() => {
+  const el = document.querySelector(".phone-wrap") as HTMLElement | null;
+  if (!el) return;
+  el.removeEventListener("touchstart", onTouchStart);
+  el.removeEventListener("touchmove", onTouchMove);
+  el.removeEventListener("touchend", onTouchEnd);
+  el.removeEventListener("touchcancel", onTouchEnd);
+});
 </script>
 
 <template>
