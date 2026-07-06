@@ -998,23 +998,37 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   右侧手机预览（保留原始样式兼容）
+   右侧手机预览（固定尺寸，不受窗口缩放影响）
+   原理：.phone (1170×2532) 通过 .phone-content 的 scale(.3333) 缩放展示，
+   .phone-wrap 固定 390×844，不会被 flex 压缩也不会随窗口变形。
    ═══════════════════════════════════════════════════════════════════ */
 .phone-wrap {
+  width: 390px;
+  height: 844px;
   flex-shrink: 0;
   position: relative;
+  overflow: hidden;
 }
 
+.phone-content {
+  transform: scale(.33333333);
+  transform-origin: 0 0;
+  border: 1px solid #f1f1f1;
+}
+
+/* #phone.phone 的尺寸由 /static/app/css/app.css 统一提供（1170×2532px），
+   此处只补一个 position 覆盖（防被其他规则干扰）。 */
 #phone.phone {
   position: relative !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   响应式
+   响应式：手机窄屏下 phone-wrap 保持固定居中，不缩放
    ═══════════════════════════════════════════════════════════════════ */
 @media screen and (max-width: 1024px) {
   .page-content {
     flex-direction: column;
+    align-items: center;
   }
 
   .cfg-panel {
@@ -1023,7 +1037,14 @@
   }
 
   .phone-wrap {
-    margin: 0 auto;
+    width: 390px;
+    height: 844px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .phone-content {
+    transform: scale(.33333333);
   }
 }
 
