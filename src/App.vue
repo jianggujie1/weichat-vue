@@ -42,7 +42,7 @@ function downloadPreview() {
       >生成图片</a
     >
 
-    <!-- 图片预览弹窗 -->
+    <!-- 图片预览弹窗：参照旧项目 zui.lightbox，图片原尺寸显示，超出可滚动 -->
     <Teleport to="body">
       <div v-if="previewImage.visible" class="preview-overlay" @click.self="closePreview">
         <div class="preview-modal">
@@ -69,20 +69,19 @@ function downloadPreview() {
 .preview-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.75);
   z-index: 9999;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  overflow: auto;
 }
 
-  .preview-modal {
+.preview-modal {
   background: #fff;
-  border-radius: 12px;
-  height: 90vh;
+  margin: 40px auto;
+  border-radius: 4px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
 .preview-header {
@@ -90,16 +89,15 @@ function downloadPreview() {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 14px;
   font-weight: 500;
-  flex-shrink: 0;
 }
 
 .preview-close {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 20px;
   cursor: pointer;
   color: #999;
   padding: 0;
@@ -107,25 +105,23 @@ function downloadPreview() {
 }
 
 .preview-body {
-  padding: 12px;
   overflow: auto;
-  flex: 1;
+  text-align: center;
+  background: #1a1a1a;
+  line-height: 0;
 }
 
 .preview-body img {
-  max-height: 80vh;
   display: block;
-  border-radius: 4px;
 }
 
 .preview-footer {
-  padding: 12px 16px;
-  border-top: 1px solid #eee;
+  padding: 10px 16px;
+  border-top: 1px solid #e8e8e8;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
 .preview-hint {
@@ -138,9 +134,9 @@ function downloadPreview() {
   background: #07c160;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 8px 32px;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
 }
 </style>
