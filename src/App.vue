@@ -76,6 +76,7 @@ function downloadPreview() {
   justify-content: center;
 }
 
+  .preview-modal {
   background: #fff;
   border-radius: 12px;
   width: min(90vw, 600px);
