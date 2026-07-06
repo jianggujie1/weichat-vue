@@ -32,6 +32,13 @@ let gifInstance: import("../types/index").GIFInstance | null = null;
 let captureInterval: ReturnType<typeof setInterval> | null = null;
 const FRAME_INTERVAL = 100; // 每100ms捕获一帧
 
+const previewImage = reactive({ dataUrl: "", visible: false });
+
+function closePreview() {
+  previewImage.dataUrl = "";
+  previewImage.visible = false;
+}
+
 // ─── default data ──────────────────────────────────────────────────────────
 const state = {
   phone: reactive<PhoneConfig>({
@@ -498,13 +505,8 @@ export function useChat() {
     window
       .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 2 })
       .then((canvas) => {
-        const dataUrl = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.download = "wechat-chat.png";
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        previewImage.dataUrl = canvas.toDataURL("image/png");
+        previewImage.visible = true;
       })
       .catch((err) => {
         console.error("生成图片失败:", err);
@@ -755,9 +757,8 @@ export function useChat() {
     hours,
     minutes,
     save,
+    previewImage,
+    closePreview,
     recordingState,
-    startRecording,
-    stopRecording,
-    batchImport,
   };
 }
