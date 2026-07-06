@@ -76,13 +76,13 @@ function downloadPreview() {
   justify-content: center;
 }
 
-.preview-modal {
+  .preview-modal {
   background: #fff;
   border-radius: 12px;
-  max-height: 90vh;
+  height: 90vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .preview-header {
