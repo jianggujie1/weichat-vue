@@ -502,13 +502,32 @@ export function useChat() {
       alert("html2canvas 未加载，请刷新页面");
       return;
     }
+    // 保存用户缩放状态，截图前临时恢复原始尺寸
+    const content = document.querySelector(".phone-content") as HTMLElement | null;
+    const wrap = phoneEl;
+    const savedTransform = content?.style.transform || "";
+    const savedWidth = wrap.style.width;
+    const savedHeight = wrap.style.height;
+    if (content) content.style.transform = "";
+    wrap.style.width = "390px";
+    wrap.style.height = "844px";
+
     window
       .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 2 })
       .then((canvas) => {
+        // 恢复用户缩放状态
+        if (content) content.style.transform = savedTransform;
+        wrap.style.width = savedWidth;
+        wrap.style.height = savedHeight;
+
         previewImage.dataUrl = canvas.toDataURL("image/png");
         previewImage.visible = true;
       })
       .catch((err) => {
+        // 确保出错时也恢复
+        if (content) content.style.transform = savedTransform;
+        wrap.style.width = savedWidth;
+        wrap.style.height = savedHeight;
         console.error("生成图片失败:", err);
         alert("生成图片失败: " + err.message);
       });
