@@ -55,21 +55,21 @@
   --spacing-xl:  24px;
 }
 
-/* ─── 通用布局（固定总宽度 950px，不随窗口自适应）────────────────── */
+/* ─── 通用布局（默认移动端上下布局，媒体查询 751px+ 覆盖为桌面左右布局）── */
 .page-content {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
-  width: 950px;
-  flex-shrink: 0;
+  width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   左侧配置面板（固定宽度，不随窗口自适应）
+   左侧配置面板（默认移动端自适应宽度，最大 540px）
    ═══════════════════════════════════════════════════════════════════ */
 .cfg-panel {
-  width: 540px;
+  width: 100%;
+  max-width: 540px;
   flex-shrink: 0;
   background: var(--white);
   border: 1px solid var(--border);
@@ -1028,32 +1028,15 @@
   color: #ff9800;
   font-weight: 500;
 }
-/* ═══════════════════════════════════════════════════════════════════
-   响应式：窄屏（<= 750px）改为上下布局
-   断点选 750px: >= 751px 保持原有 950px 桌面布局（phone natural 1170px > 750px 不触发）;
-   <= 750px 触发，上下堆叠，phone 缩放至 .333 视觉 390px。
-   ═══════════════════════════════════════════════════════════════════ */
-@media screen and (max-width: 750px) {
+@media screen and (min-width: 751px) {
   .page-content {
-    flex-direction: column;
-    align-items: center;
-    width: auto;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 950px;
   }
 
   .cfg-panel {
-    width: 360px;
+    width: 540px;
     flex-shrink: 0;
-  }
-
-  .phone-wrap {
-    width: 390px;
-    height: 844px;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .phone-content {
-    transform: scale(.33333333);
-    transform-origin: 0 0;
   }
 }
