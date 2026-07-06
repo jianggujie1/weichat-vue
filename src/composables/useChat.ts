@@ -498,17 +498,13 @@ export function useChat() {
     window
       .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 2 })
       .then((canvas) => {
-        canvas.toBlob((blob) => {
-          if (!blob) return;
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.download = "wechat-chat.png";
-          link.href = url;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setTimeout(() => URL.revokeObjectURL(url), 100);
-        }, "image/png");
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = "wechat-chat.png";
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       })
       .catch((err) => {
         console.error("生成图片失败:", err);
