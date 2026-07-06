@@ -76,10 +76,9 @@ function downloadPreview() {
   justify-content: center;
 }
 
-  .preview-modal {
+.preview-modal {
   background: #fff;
   border-radius: 12px;
-  width: min(90vw, 600px);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -94,6 +93,7 @@ function downloadPreview() {
   border-bottom: 1px solid #eee;
   font-size: 15px;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .preview-close {
@@ -109,12 +109,11 @@ function downloadPreview() {
 .preview-body {
   padding: 12px;
   overflow: auto;
-  max-height: 60vh;
+  flex: 1;
 }
 
 .preview-body img {
-  max-width: 100%;
-  max-height: 60vh;
+  max-height: 80vh;
   display: block;
   border-radius: 4px;
 }
@@ -126,6 +125,7 @@ function downloadPreview() {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .preview-hint {
@@ -144,4 +144,3 @@ function downloadPreview() {
   cursor: pointer;
 }
 </style>
-
