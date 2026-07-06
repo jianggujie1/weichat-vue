@@ -76,10 +76,9 @@ function downloadPreview() {
   justify-content: center;
 }
 
-.preview-modal {
   background: #fff;
   border-radius: 12px;
-  max-width: 90vw;
+  width: min(90vw, 600px);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
