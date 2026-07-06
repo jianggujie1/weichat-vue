@@ -508,30 +508,35 @@ export function useChat() {
     const savedTransform = content?.style.transform || "";
     const savedWidth = wrap.style.width;
     const savedHeight = wrap.style.height;
-    if (content) content.style.transform = "";
-    wrap.style.width = "390px";
-    wrap.style.height = "844px";
-
+    // 清除 transform 并展开 wrap 为手机原始尺寸，避免被 overflow 裁切
+    if (content) {
+      content.style.transform = "none";
+    }
+    wrap.style.width = "1170px";
+    wrap.style.height = "2532px";
     window
-      .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 2 })
+      .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 1 })
       .then((canvas) => {
         // 恢复用户缩放状态
         if (content) content.style.transform = savedTransform;
         wrap.style.width = savedWidth;
         wrap.style.height = savedHeight;
+        (wrap as HTMLElement).style.overflow = "";
 
         previewImage.dataUrl = canvas.toDataURL("image/png");
         previewImage.visible = true;
       })
       .catch((err) => {
-        // 确保出错时也恢复
         if (content) content.style.transform = savedTransform;
         wrap.style.width = savedWidth;
         wrap.style.height = savedHeight;
+        (wrap as HTMLElement).style.overflow = "";
         console.error("生成图片失败:", err);
         alert("生成图片失败: " + err.message);
       });
   }
+
+
 
   // ── GIF recording ───────────────────────────────────────────────────────
   function captureFrame() {
