@@ -56,21 +56,20 @@
 }
 
 /* ─── 通用布局（默认移动端上下布局，媒体查询 751px+ 覆盖为桌面左右布局）── */
-.page-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
+ .page-content {
+   display: flex;
+   flex-direction: row;
+   align-items: flex-start;
+   width: 950px;
+   margin: 0 auto;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
    左侧配置面板（默认移动端自适应宽度，最大 540px）
    ═══════════════════════════════════════════════════════════════════ */
-.cfg-panel {
-  width: 100%;
-  max-width: 540px;
-  flex-shrink: 0;
+ .cfg-panel {
+   width: 540px;
+   flex-shrink: 0;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -1027,16 +1026,4 @@
 .wechat-notice-highlight {
   color: #ff9800;
   font-weight: 500;
-}
-@media screen and (min-width: 751px) {
-  .page-content {
-    flex-direction: row;
-    align-items: flex-start;
-    width: 950px;
-  }
-
-  .cfg-panel {
-    width: 540px;
-    flex-shrink: 0;
-  }
 }
