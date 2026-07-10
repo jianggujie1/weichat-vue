@@ -82,6 +82,10 @@ function downloadPreview() {
   margin: 40px auto;
   border-radius: 4px;
   overflow: hidden;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .preview-header {
@@ -100,20 +104,21 @@ function downloadPreview() {
   font-size: 20px;
   cursor: pointer;
   color: #999;
-  padding: 0;
-  line-height: 1;
 }
-
 .preview-body {
   overflow: auto;
   text-align: center;
   background: #1a1a1a;
   line-height: 0;
+  flex: 1;
 }
 
 .preview-body img {
   display: block;
+  max-width: 100%;
+  height: auto;
 }
+
 
 .preview-footer {
   padding: 10px 16px;

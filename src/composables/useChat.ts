@@ -502,38 +502,52 @@ export function useChat() {
       alert("html2canvas 未加载，请刷新页面");
       return;
     }
-    // 保存用户缩放状态，截图前临时恢复原始尺寸
-    const content = document.querySelector(".phone-content") as HTMLElement | null;
-    const wrap = phoneEl;
-    const savedTransform = content?.style.transform || "";
-    const savedWidth = wrap.style.width;
-    const savedHeight = wrap.style.height;
-    // 清除 transform 并展开 wrap 为手机原始尺寸，避免被 overflow 裁切
-    if (content) {
-      content.style.transform = "none";
-    }
-    wrap.style.width = "1170px";
-    wrap.style.height = "2532px";
-    window
-      .html2canvas(phoneEl, { useCORS: true, backgroundColor: null, scale: 1 })
-      .then((canvas) => {
-        // 恢复用户缩放状态
-        if (content) content.style.transform = savedTransform;
-        wrap.style.width = savedWidth;
-        wrap.style.height = savedHeight;
-        (wrap as HTMLElement).style.overflow = "";
+  // 同步当前滚动位置：获取可见区域内 .phone-body 的 scrollTop，并在克隆体上反向偏移，使 html2canvas 截取用户当前可见区域
+  const phoneBodyEl = phoneEl.querySelector(".phone-body") as HTMLElement | null;
+  const currentScrollTop = phoneBodyEl ? phoneBodyEl.scrollTop : 0;
 
-        previewImage.dataUrl = canvas.toDataURL("image/png");
-        previewImage.visible = true;
-      })
-      .catch((err) => {
-        if (content) content.style.transform = savedTransform;
-        wrap.style.width = savedWidth;
-        wrap.style.height = savedHeight;
-        (wrap as HTMLElement).style.overflow = "";
-        console.error("生成图片失败:", err);
-        alert("生成图片失败: " + err.message);
-      });
+// 创建离屏克隆元素进行截图，避免用户可见的弹性布局跳动
+const offscreen = document.createElement("div");
+offscreen.style.cssText = "position:absolute;left:-9999px;top:0;";
+const phoneClone = phoneEl.cloneNode(true) as HTMLElement;
+phoneClone.style.width = "1170px";
+phoneClone.style.height = "2532px";
+const contentInClone = phoneClone.querySelector(".phone-content") as HTMLElement | null;
+if (contentInClone) contentInClone.style.transform = "none";
+
+// 将滚动偏移应用到克隆体，使 html2canvas 截取的是用户当前可见区域
+const phoneBodyClone = phoneClone.querySelector(".phone-body") as HTMLElement | null;
+if (phoneBodyClone) {
+  phoneBodyClone.style.position = "relative";
+  phoneBodyClone.style.overflow = "visible";
+  phoneBodyClone.style.top = `-${currentScrollTop}px`;
+}
+
+offscreen.appendChild(phoneClone);
+document.body.appendChild(offscreen);
+
+  const cleanup = () => {
+    document.body.removeChild(offscreen);
+  };
+
+  window
+    .html2canvas(phoneClone, {
+      useCORS: true,
+      backgroundColor: null,
+      scale: 1,
+      width: 1170,
+      height: 2532,
+    })
+    .then((canvas) => {
+      cleanup();
+      previewImage.dataUrl = canvas.toDataURL("image/png");
+      previewImage.visible = true;
+    })
+    .catch((err) => {
+      cleanup();
+      console.error("生成图片失败:", err);
+      alert("生成图片失败: " + err.message);
+    });
   }
 
 
